@@ -1,0 +1,6 @@
+{
+  "fb15k": {
+      "no_entities": 246236,
+      "no_relationships": 237
+  }
+}
