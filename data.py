@@ -2,11 +2,13 @@ import os
 from collections import defaultdict
 import numpy as np
 from torch.utils.data import Dataset
+import itertools
+import random
 
 class RelationDataset(Dataset):
     def __init__(self, data_directory, typed=False, no_negsamples=10):
         self.NO_NEGSAMPLES = no_negsamples
-
+        random.seed(42)
         self.data_directory = data_directory
         entityFile = 'entity2id.txt';
         relationFile = 'relation2id.txt';
