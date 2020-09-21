@@ -1,24 +1,6 @@
 import torch
 from torch import nn
-import torch.optim as optim
-import json
-
-
-class RNN(nn.Module):
-    def __init__(self, input_size, hidden_size, output_size):
-        super(RNN, self).__init__()
-
-        self.hidden_size = hidden_size
-
-        self.i2h = nn.Linear(input_size + hidden_size, hidden_size)
-
-    def forward(self, input, hidden):
-        combined = torch.cat((input, hidden), 1)
-        hidden = self.i2h(combined)
-        return hidden
-
-    def initHidden(self):
-        return torch.zeros(1, self.hidden_size)
+import numpy as np
 
 
 class DistMultNN(nn.Module):
