@@ -95,7 +95,7 @@ class RelationDataset(Dataset):
         return len(self.train_data)
 
     def __getitem__(self, idx):
-        e1_neg = np.random.choice(len(self.entity2idx), self.NO_NEGSAMPLES)
-        e2_neg = np.random.choice(len(self.entity2idx), self.NO_NEGSAMPLES)
+        e1_neg = random.sample(list(self.entity2idx.values()), self.NO_NEGSAMPLES)
+        e2_neg = random.sample(list(self.entity2idx.values()), self.NO_NEGSAMPLES)
         e1_pos, r, e2_pos = self.train_data[0][idx], self.train_data[1][idx], self.train_data[2][idx]
-        return np.concatenate(([e1_pos, r, e2_pos], e1_neg, e2_neg))
+        return np.array(list(zip([e1_pos] + e1_neg, itertools.repeat(r), [e2_pos] + e2_neg)))
