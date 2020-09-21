@@ -5,23 +5,23 @@ import numpy as np
 
 class DistMultNN(nn.Module):
 
-    def __init__(self, dataset, batch_size=32, learning_rate=1e-4):
-        with open("config.json") as f:
-            ds = json.load(f)
-        if dataset not in ds:
-            raise ValueError("invalid dataset name")
-        self.NO_ENTITIES = ds[dataset]['no_entities']
-        self.NO_RELATIONSHIPS = ds[dataset]['no_relationships']
-        self.ENCODING_DIM = 10
-        self.entities_embedding = nn.init.xavier_uniform_(torch.zeros((self.NO_ENTITIES, self.ENCODING_DIM)))
-        self.relation_embedding = nn.init.xavier_uniform_(torch.zeros((self.NO_RELATIONSHIPS, self.ENCODING_DIM)))
-        self.LEARNING_RATE = learning_rate
-        self.BATCH_SIZE = batch_size
-        self.W = torch.rand(self.ENCODING_DIM, self.ENCODING_DIM)  # W is symmetric
+    def __init__(self, no_entities, no_relationships, encoding_dim=10, lambda_=1.):
+        super().__init__()
+        self.seed = 42
+        np.random.seed(self.seed)
+        self.NO_ENTITIES = no_entities
+        self.NO_RELATIONSHIPS = no_relationships
+        self.ENCODING_DIM = encoding_dim
+        self.entities_embedding = nn.Embedding(no_entities, encoding_dim)
+        self.relation_embedding = nn.Embedding(no_relationships, encoding_dim)
+        self.W = torch.rand(self.ENCODING_DIM, self.ENCODING_DIM,
+                            requires_grad=True)  # W is symmetric, todo: requireGrad?
         self.W = (self.W + self.W.t()) / 2
-        self.b = torch.rand(self.ENCODING_DIM, 1)
-        self.lambda_ = torch.rand(1, 2)
-        r = torch.randn(self.ENCODING_DIM, self.ENCODING_DIM)
+        self.V = self.W.detach() - lambda_ * torch.eye(self.ENCODING_DIM)
+        self.lambda_ = lambda_
+        self.b = torch.rand(self.ENCODING_DIM, requires_grad=True)
+        self.rnn = torch.nn.RNN(input_size=encoding_dim, hidden_size=1, num_layers=1, nonlinearity='relu')
+        self.loss_func = torch.nn.LogSoftmax(dim=1)
 
     def forward(self, sample):
         """
