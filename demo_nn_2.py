@@ -15,10 +15,7 @@ class FooNet(nn.Module):
         self.ENCODING_DIM = encoding_dim
         self.entities_embedding = nn.Embedding(no_entities, encoding_dim)
         self.relation_embedding = nn.Embedding(no_relationships, encoding_dim)
-        self.W = torch.rand(self.ENCODING_DIM, self.ENCODING_DIM,
-                            requires_grad=True)  # W is symmetric, todo: requireGrad?
-        self.W = (self.W + self.W.t()) / 2
-        self.V = self.W.detach() - lambda_ * torch.eye(self.ENCODING_DIM)
+        self.W = torch.nn.Parameter(torch.rand(self.ENCODING_DIM, self.ENCODING_DIM))
         self.lambda_ = lambda_
         self.b = torch.rand(self.ENCODING_DIM, requires_grad=True)
         self.rnn = torch.nn.RNN(input_size=encoding_dim, hidden_size=1, num_layers=1, nonlinearity='relu')
@@ -64,7 +61,8 @@ class FooNet(nn.Module):
 
     def H(self, h, x):
         diff = h - x
-        hW = torch.einsum('...ij,jk', h, self.W)
+        Wsym = self.W + self.W.t()
+        hW = torch.einsum('...ij,jk', h, Wsym)
         result = torch.einsum('ijk,ikj->ij', hW, h.transpose(1, 2)) + torch.einsum('...k,k', h,
                                                                                    self.b) - self.lambda_ * self._2d_norm_batch(
             diff)
@@ -72,7 +70,8 @@ class FooNet(nn.Module):
         return result
 
     def muy(self, x):
-        V = self.W - (self.lambda_ * torch.eye(self.ENCODING_DIM))
+        Wsym = self.W + self.W.t()
+        V = Wsym - (self.lambda_ * torch.eye(self.ENCODING_DIM))
         V = V.inverse()
         r = torch.einsum('ijk,kt', -0.5 * self.b + self.lambda_ * x, V)
         assert r.shape == x.shape
