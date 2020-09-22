@@ -96,11 +96,13 @@ BATCH_SIZE = 8
 ENCODING_DIM = 10
 nn = FooNet(NO_ENTITIES, NO_RELATIONSHIPS)
 optimizer = optim.SGD(nn.parameters(), lr=0.0001)
+nn.train()
 for i_batch, sample_batched in enumerate(dataloader):
     optimizer.zero_grad()
-    y_pred = nn.forward(sample_batched)
-    loss = nn.loss(y_pred)
-    loss.backward()
+    with torch.set_grad_enabled(True):
+        y_pred = nn.forward(sample_batched)
+        loss = nn.loss(y_pred)
+        loss.backward()
 
     if i_batch % 20 == 0:
         print(i_batch, loss.item())
