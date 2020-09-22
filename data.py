@@ -92,7 +92,7 @@ class RelationDataset(Dataset):
             self.train_data, self.val_data, self.test_data = [D[:3] for D in [trainData, devData,
                                                                               testData]]  # remove type info if it is there
     def __len__(self):
-        return len(self.train_data)
+        return len(self.train_data[0])
 
     def __getitem__(self, idx):
         e1_neg = random.sample(list(self.entity2idx.values()), self.NO_NEGSAMPLES)
