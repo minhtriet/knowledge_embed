@@ -3,9 +3,7 @@ import json
 from data import RelationDataset
 from torch.utils.data import DataLoader
 import torch.optim as optim
-
-
-
+from harmon_net import HarmonNet
 
 dataset_name = "FB15K"
 NO_NEGSAMPLES = 10
@@ -18,7 +16,7 @@ NO_ENTITIES = ds[dataset_name]['no_entities']
 NO_RELATIONSHIPS = ds[dataset_name]['no_relationships']
 BATCH_SIZE = 8
 ENCODING_DIM = 10
-nn = FooNet(NO_ENTITIES, NO_RELATIONSHIPS)
+nn = HarmonNet(NO_ENTITIES, NO_RELATIONSHIPS)
 optimizer = optim.SGD(nn.parameters(), lr=0.00001)
 nn.train()
 min_loss = float('inf')
@@ -34,5 +32,3 @@ for i_batch, sample_batched in enumerate(dataloader):
     if i_batch % 20 == 0:
         print(i_batch, loss.item())
     optimizer.step()
-
-
