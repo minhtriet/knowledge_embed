@@ -95,15 +95,20 @@ NO_RELATIONSHIPS = ds[dataset_name]['no_relationships']
 BATCH_SIZE = 8
 ENCODING_DIM = 10
 nn = FooNet(NO_ENTITIES, NO_RELATIONSHIPS)
-optimizer = optim.SGD(nn.parameters(), lr=0.0001)
+optimizer = optim.SGD(nn.parameters(), lr=0.00001)
 nn.train()
+min_loss = float('inf')
 for i_batch, sample_batched in enumerate(dataloader):
     optimizer.zero_grad()
     with torch.set_grad_enabled(True):
         y_pred = nn.forward(sample_batched)
         loss = nn.loss(y_pred)
+        if (i_batch > 100000) and (min_loss > loss.item()):
+            torch.save(nn.state_dict(), "best_model")
+            min_loss = loss.item()
         loss.backward()
-
     if i_batch % 20 == 0:
         print(i_batch, loss.item())
     optimizer.step()
+
+
