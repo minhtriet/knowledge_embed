@@ -75,8 +75,8 @@ class FooNet(nn.Module):
         V = V.inverse()
         r = torch.einsum('ijk,kt', -0.5 * self.b + self.lambda_ * x, V)
         assert r.shape == x.shape
-        for i in range(x.shape[0]):
-            assert (-0.5 * self.b + self.lambda_ * x[i]).mm(V).allclose(r[i])
+        # for i in range(x.shape[0]):
+        #     assert (-0.5 * self.b + self.lambda_ * x[i]).mm(V).allclose(r[i],atol=3e-7)
         return r
 
     def score(self, x):
