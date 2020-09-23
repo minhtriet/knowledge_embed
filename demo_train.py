@@ -9,8 +9,8 @@ dataset_name = "FB15K"
 NO_NEGSAMPLES = 10
 with open("config.json") as f:
     ds = json.load(f)
-train_dataset = RelationDataset("data/fb15k", no_negsamples=NO_NEGSAMPLES)
-train_dataloader = DataLoader(train_dataset.train_data, batch_size=4, shuffle=True)  # only to load train data
+train_dataset = RelationDataset("data/fb15k", no_negsamples=NO_NEGSAMPLES, slice="train")
+train_dataloader = DataLoader(train_dataset, batch_size=4, shuffle=True)  # only to load train data
 
 NO_ENTITIES = ds[dataset_name]['no_entities']
 NO_RELATIONSHIPS = ds[dataset_name]['no_relationships']
@@ -21,7 +21,8 @@ optimizer = optim.SGD(nn.parameters(), lr=0.00001)
 nn.train()
 min_loss = float('inf')
 
-val_set = train_dataset.val_data
+val_dataset = RelationDataset("data/fb15k", no_negsamples=NO_NEGSAMPLES, slice="dev")
+val_dataloader = DataLoader(val_dataset, batch_size=len(val_dataset), shuffle=False)
 
 for i_batch, sample_batched in enumerate(train_dataloader):
     optimizer.zero_grad()
