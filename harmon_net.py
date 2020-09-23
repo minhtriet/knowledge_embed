@@ -30,7 +30,6 @@ class HarmonNet(nn.Module):
         Deal with a single train item -> batch
         samples [(e1,r,e2), ...]
         """
-        batch_size = samples.shape[0]
         e1s, rs, e2s = samples[:, :, 0], samples[:, :, 1], samples[:, :, 2]
         assert e1s.shape == (samples.shape[0], samples.shape[1])
         entity_1 = self.entities_embedding(e1s)

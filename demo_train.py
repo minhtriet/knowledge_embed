@@ -37,5 +37,7 @@ for i_batch, sample_batched in enumerate(train_dataloader):
     if i_batch % 40 == 0:
         with torch.no_grad():
             nn.eval()
-            y_pred = nn.forward(val_set)
-            loss = nn.loss(y_pred)
+            for i, val_batch in enumerate(val_dataloader):
+                y_pred = nn.forward(val_batch)
+                loss += nn.loss(y_pred)
+            print("val loss", loss)
