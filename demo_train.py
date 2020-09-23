@@ -9,8 +9,8 @@ dataset_name = "FB15K"
 NO_NEGSAMPLES = 10
 with open("config.json") as f:
     ds = json.load(f)
-dataset = RelationDataset("data/fb15k", no_negsamples=NO_NEGSAMPLES)
-dataloader = DataLoader(dataset, batch_size=4, shuffle=True)  # only to load train data
+train_dataset = RelationDataset("data/fb15k", no_negsamples=NO_NEGSAMPLES)
+train_dataloader = DataLoader(train_dataset.train_data, batch_size=4, shuffle=True)  # only to load train data
 
 NO_ENTITIES = ds[dataset_name]['no_entities']
 NO_RELATIONSHIPS = ds[dataset_name]['no_relationships']
@@ -20,7 +20,10 @@ nn = HarmonNet(NO_ENTITIES, NO_RELATIONSHIPS)
 optimizer = optim.SGD(nn.parameters(), lr=0.00001)
 nn.train()
 min_loss = float('inf')
-for i_batch, sample_batched in enumerate(dataloader):
+
+val_set = train_dataset.val_data
+
+for i_batch, sample_batched in enumerate(train_dataloader):
     optimizer.zero_grad()
     with torch.set_grad_enabled(True):
         y_pred = nn.forward(sample_batched)
@@ -29,6 +32,9 @@ for i_batch, sample_batched in enumerate(dataloader):
             torch.save(nn.state_dict(), "best_model")
             min_loss = loss.item()
         loss.backward()
-    if i_batch % 20 == 0:
-        print(i_batch, loss.item())
-    optimizer.step()
+        optimizer.step()
+    if i_batch % 40 == 0:
+        with torch.no_grad():
+            nn.eval()
+            y_pred = nn.forward(val_set)
+            loss = nn.loss(y_pred)
