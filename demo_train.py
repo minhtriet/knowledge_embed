@@ -4,7 +4,10 @@ from data import RelationDataset
 from torch.utils.data import DataLoader
 import torch.optim as optim
 from harmon_net import HarmonNet
+from torch.utils.tensorboard import SummaryWriter
+import logging
 
+logging.basicConfig(format='%(asctime)s %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s', level=logging.DEBUG)
 dataset_name = "FB15K"
 NO_NEGSAMPLES = 10
 with open("config.json") as f:
@@ -20,7 +23,7 @@ nn = HarmonNet(NO_ENTITIES, NO_RELATIONSHIPS)
 optimizer = optim.SGD(nn.parameters(), lr=0.00001)
 nn.train()
 min_loss = float('inf')
-
+writer = SummaryWriter('runs/')
 val_dataset = RelationDataset("data/fb15k", no_negsamples=NO_NEGSAMPLES, slice="dev")
 val_dataloader = DataLoader(val_dataset, batch_size=len(val_dataset), shuffle=False)
 
@@ -40,4 +43,6 @@ for i_batch, sample_batched in enumerate(train_dataloader):
             for i, val_batch in enumerate(val_dataloader):
                 y_pred = nn.forward(val_batch)
                 loss += nn.loss(y_pred)
-            print("val loss", loss)
+            logging.debug(loss)
+            writer.add_scalar('val loss', loss, len(train_dataloader) + i_batch)
+writer.close()
