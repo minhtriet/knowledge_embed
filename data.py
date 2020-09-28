@@ -64,7 +64,7 @@ class RelationDataset(Dataset):
         return len(self.data[0])
 
     def __getitem__(self, idx):
-        if self.slice == "train":
+        if self.NO_NEGSAMPLES > 0:
             e1_neg = random.sample(list(self.entity2idx.values()), self.NO_NEGSAMPLES)
             e2_neg = random.sample(list(self.entity2idx.values()), self.NO_NEGSAMPLES)
             e1_pos, r, e2_pos = self.data[0][idx], self.data[1][idx], self.data[2][idx]

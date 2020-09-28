@@ -21,8 +21,8 @@ class HarmonNet(nn.Module):
         """
         compute the batch loss
         """
-        softmax = -1 * self.loss_func(y_pred)
-        result = torch.mean(softmax[:, 0])
+        softmax = -self.loss_func(y_pred)
+        result = torch.sum(softmax[:, 0])
         return result
 
     def forward(self, samples):
