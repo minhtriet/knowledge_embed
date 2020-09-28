@@ -31,7 +31,7 @@ class HarmonNet(nn.Module):
         samples [(e1,r,e2), ...]
         """
         e1s, rs, e2s = samples[:, :, 0], samples[:, :, 1], samples[:, :, 2]
-        assert e1s.shape == (samples.shape[0], samples.shape[1])
+        # assert e1s.shape == (samples.shape[0], samples.shape[1])
         entity_1 = self.entities_embedding(e1s)
         entity_2 = self.entities_embedding(e2s)
         r = self.relation_embedding(rs)
@@ -58,10 +58,10 @@ class HarmonNet(nn.Module):
         diff = h - x
         Wsym = self.W + self.W.t()
         hW = torch.einsum('...ij,jk', h, Wsym)
-        result = torch.einsum('ijk,ikj->ij', hW, h.transpose(1, 2)) + torch.einsum('...k,k', h,
-                                                                                   self.b) - self.lambda_ * self._2d_norm_batch(
-            diff)
-        assert result.shape == torch.Size([x.shape[0], x.shape[1]])
+        result = torch.einsum('ijk,ikj->ij', hW, h.transpose(1, 2)) + \
+                 torch.einsum('...k,k', h, self.b) - \
+                 self.lambda_ * self._2d_norm_batch( diff)
+        # assert result.shape == torch.Size([x.shape[0], x.shape[1]])
         return result
 
     def muy(self, x):
@@ -69,7 +69,7 @@ class HarmonNet(nn.Module):
         V = Wsym - (self.lambda_ * torch.eye(self.ENCODING_DIM))
         V = V.inverse()
         r = torch.einsum('ijk,kt', -0.5 * self.b + self.lambda_ * x, V)
-        assert r.shape == x.shape
+        # assert r.shape == x.shape
         # for i in range(x.shape[0]):
         #     assert (-0.5 * self.b + self.lambda_ * x[i]).mm(V).allclose(r[i],atol=3e-7)
         return r
