@@ -13,7 +13,7 @@ class HarmonNet(nn.Module):
         self.relation_embedding = nn.Embedding(no_relationships, encoding_dim)
         self.W = torch.nn.Parameter(torch.rand(self.ENCODING_DIM, self.ENCODING_DIM))
         self.lambda_ = lambda_
-        self.b = torch.rand(self.ENCODING_DIM, requires_grad=True)
+        self.b = torch.nn.Parameter(torch.rand(self.ENCODING_DIM, requires_grad=True))
         self.rnn = torch.nn.RNN(input_size=encoding_dim, hidden_size=1, num_layers=1, nonlinearity='relu')
         self.loss_func = torch.nn.LogSoftmax(dim=1)
 
