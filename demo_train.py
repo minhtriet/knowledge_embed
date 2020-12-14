@@ -21,7 +21,7 @@ else:
 # the rest
 
 logging.basicConfig(format='%(asctime)s %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s', level=logging.DEBUG)
-dataset_name = "FB15K"
+dataset_name = "FB15K-237"
 NO_NEGSAMPLES = 10
 BATCH_SIZE = 32
 ENCODING_DIM = 20
