@@ -7,8 +7,19 @@ from harmon_net import HarmonNet
 from torch.utils.tensorboard import SummaryWriter
 import logging
 from tqdm import tqdm
+import os
 
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
+# device setting
+if os.environ['COLAB_TPU_ADDR']:
+    import torch_xla
+    import torch_xla.core.xla_model as xm
+    device = xm.xla_device()
+else:
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
+
+# the rest
+
 logging.basicConfig(format='%(asctime)s %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s', level=logging.DEBUG)
 dataset_name = "FB15K"
 NO_NEGSAMPLES = 10
