@@ -1,3 +1,4 @@
+%%writefile demo_train.py
 import torch
 import json
 from data import RelationDataset
@@ -21,7 +22,7 @@ train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True
 
 NO_ENTITIES = ds[dataset_name]['no_entities']
 NO_RELATIONSHIPS = ds[dataset_name]['no_relationships']
-nn = HarmonNet(NO_ENTITIES, NO_RELATIONSHIPS, device=device).to(device)
+nn = HarmonNet(NO_ENTITIES, NO_RELATIONSHIPS, device).to(device)
 optimizer = optim.Adam(nn.parameters(), lr=0.001)
 min_loss = float('inf')
 writer = SummaryWriter()
@@ -31,10 +32,11 @@ val_dataloader = DataLoader(val_dataset, batch_size=len(val_dataset), shuffle=Fa
 
 for epoch in range(8):
     for i_batch, sample_batched in enumerate(train_dataloader):
+        sample_batched = sample_batched.to(device)
         nn.train()
         optimizer.zero_grad()
         with torch.set_grad_enabled(True):
-            y_pred = nn.forward(sample_batched.to(device))
+            y_pred = nn.forward(sample_batched)
             writer.add_graph(nn, sample_batched)
             loss = nn.loss(y_pred)
             if (i_batch > 100000) and (min_loss > loss.item()):
