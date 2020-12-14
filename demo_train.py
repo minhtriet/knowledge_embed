@@ -16,7 +16,7 @@ BATCH_SIZE = 32
 ENCODING_DIM = 20
 with open("config.json") as f:
     ds = json.load(f)
-train_dataset = RelationDataset("data/fb15k", no_negsamples=NO_NEGSAMPLES, slice="train")
+train_dataset = RelationDataset("data/FB15K", no_negsamples=NO_NEGSAMPLES, slice="train")
 train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)  # only to load train data
 
 NO_ENTITIES = ds[dataset_name]['no_entities']
