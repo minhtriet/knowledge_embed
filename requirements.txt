@@ -1,2 +1,2 @@
-torch==1.6.0
-pytest==6.0.1
+torch
+pytest
