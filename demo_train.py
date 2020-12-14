@@ -7,6 +7,8 @@ from harmon_net import HarmonNet
 from torch.utils.tensorboard import SummaryWriter
 import logging
 
+
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
 logging.basicConfig(format='%(asctime)s %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s', level=logging.DEBUG)
 dataset_name = "FB15K"
 NO_NEGSAMPLES = 10
@@ -32,7 +34,7 @@ for epoch in range(8):
         nn.train()
         optimizer.zero_grad()
         with torch.set_grad_enabled(True):
-            y_pred = nn.forward(sample_batched)
+            y_pred = nn.forward(sample_batched.to(device))
             writer.add_graph(nn, sample_batched)
             loss = nn.loss(y_pred)
             if (i_batch > 100000) and (min_loss > loss.item()):
