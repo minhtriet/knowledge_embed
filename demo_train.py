@@ -6,7 +6,7 @@ import torch.optim as optim
 from harmon_net import HarmonNet
 from torch.utils.tensorboard import SummaryWriter
 import logging
-
+from tqdm import tqdm
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 logging.basicConfig(format='%(asctime)s %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s', level=logging.DEBUG)
@@ -29,7 +29,7 @@ val_dataset = RelationDataset(f"data/{dataset_name}", no_negsamples=NO_NEGSAMPLE
 val_dataloader = DataLoader(val_dataset, batch_size=len(val_dataset), shuffle=False)
 
 
-for epoch in range(8):
+for epoch in tqdm(range(8)):
     for i_batch, sample_batched in enumerate(train_dataloader):
         sample_batched = sample_batched.to(device)
         nn.train()
@@ -49,7 +49,7 @@ for epoch in range(8):
             with torch.no_grad():
                 nn.eval()
                 for i, val_batch in enumerate(val_dataloader):
-                    val_batch = val_batch.to_device()
+                    val_batch = val_batch.to(device)
                     y_pred = nn.forward(val_batch)
                     val_loss = nn.loss(y_pred)
                     logging.debug(val_loss)
