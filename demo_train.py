@@ -1,4 +1,3 @@
-%%writefile demo_train.py
 import torch
 import json
 from data import RelationDataset
