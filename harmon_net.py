@@ -3,7 +3,7 @@ from torch import nn
 
 
 class HarmonNet(nn.Module):
-    def __init__(self, no_entities, no_relationships, encoding_dim=10, lambda_=1.):
+    def __init__(self, no_entities, no_relationships, encoding_dim=10, lambda_=1., device):
         super().__init__()
         torch.manual_seed(42)
         self.NO_ENTITIES = no_entities
@@ -16,6 +16,7 @@ class HarmonNet(nn.Module):
         self.b = torch.nn.Parameter(torch.rand(self.ENCODING_DIM, requires_grad=True))
         self.rnn = torch.nn.RNN(input_size=encoding_dim, hidden_size=1, num_layers=1, nonlinearity='relu')
         self.loss_func = torch.nn.LogSoftmax(dim=1)
+        self.device = device
 
     def loss(self, y_pred):
         """
@@ -56,11 +57,11 @@ class HarmonNet(nn.Module):
 
     def H(self, h, x):
         diff = h - x
-        Wsym = self.W + self.W.t()
+        Wsym = (self.W + self.W.t()).to(self.device)
         hW = torch.einsum('...ij,jk', h, Wsym)
         result = torch.einsum('ijk,ikj->ij', hW, h.transpose(1, 2)) + \
                  torch.einsum('...k,k', h, self.b) - \
-                 self.lambda_ * self._2d_norm_batch( diff)
+                 self.lambda_ * self._2d_norm_batch(diff)
         # assert result.shape == torch.Size([x.shape[0], x.shape[1]])
         return result
 
