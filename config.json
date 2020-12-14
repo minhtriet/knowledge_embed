@@ -2,5 +2,9 @@
   "FB15K": {
       "no_entities": 14951,
       "no_relationships": 1345
+  },
+  "FB15K-237": {
+    "no_entities": 14951,
+    "no_relationships": 1345
   }
 }
