@@ -21,7 +21,7 @@ train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True
 
 NO_ENTITIES = ds[dataset_name]['no_entities']
 NO_RELATIONSHIPS = ds[dataset_name]['no_relationships']
-nn = HarmonNet(NO_ENTITIES, NO_RELATIONSHIPS, device).to(device)
+nn = HarmonNet(NO_ENTITIES, NO_RELATIONSHIPS, device=device).to(device)
 optimizer = optim.Adam(nn.parameters(), lr=0.001)
 min_loss = float('inf')
 writer = SummaryWriter()

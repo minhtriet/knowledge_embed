@@ -3,7 +3,7 @@ from torch import nn
 
 
 class HarmonNet(nn.Module):
-    def __init__(self, no_entities, no_relationships, encoding_dim=10, lambda_=1., device):
+    def __init__(self, no_entities, no_relationships, device, encoding_dim=10, lambda_=1.,):
         super().__init__()
         torch.manual_seed(42)
         self.NO_ENTITIES = no_entities
