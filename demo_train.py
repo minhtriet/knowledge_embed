@@ -49,6 +49,7 @@ for epoch in range(8):
             with torch.no_grad():
                 nn.eval()
                 for i, val_batch in enumerate(val_dataloader):
+                    val_batch = val_batch.to_device()
                     y_pred = nn.forward(val_batch)
                     val_loss = nn.loss(y_pred)
                     logging.debug(val_loss)

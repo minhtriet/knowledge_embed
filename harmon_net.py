@@ -36,7 +36,6 @@ class HarmonNet(nn.Module):
         entity_1 = self.entities_embedding(e1s)
         entity_2 = self.entities_embedding(e2s)
         r = self.relation_embedding(rs)
-        import pdb; pdb.set_trace()
         x = self.harmonic_holograhpic_embedding(entity_1, r, entity_2)
         batch_result = self.score(x)
         return batch_result
