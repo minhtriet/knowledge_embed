@@ -10,7 +10,7 @@ from tqdm import tqdm
 import os
 
 # device setting
-if os.environ['COLAB_TPU_ADDR']:
+if os.environ.get('COLAB_TPU_ADDR'):
     import torch_xla
     import torch_xla.core.xla_model as xm
     device = xm.xla_device()
@@ -56,6 +56,8 @@ for epoch in tqdm(range(8)):
             temp2=nn.W.clone()
             loss.backward()
             optimizer.step()
+            if i_batch % 20 == 0:
+                logging.debug(i_batch)
         if i_batch % 4096 == 0:
             with torch.no_grad():
                 nn.eval()
